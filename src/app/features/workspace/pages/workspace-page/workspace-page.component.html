@@ -1,0 +1,17 @@
+<div class="workspace-layout">
+  <section class="list-section">
+    <app-index-list
+      [issues]="issues"
+      [selectedIssueId]="selectedIssue?.id ?? null"
+      (issueSelected)="onSelectIssue($event)"
+    ></app-index-list>
+  </section>
+  @if (selectedIssue) {
+    <section class="detail-section">
+      <app-detail-panel
+        [issue]="selectedIssue"
+        (closed)="onCloseDetail()"
+      ></app-detail-panel>
+    </section>
+  }
+</div>

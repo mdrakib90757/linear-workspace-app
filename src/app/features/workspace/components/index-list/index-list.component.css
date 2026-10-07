@@ -1,0 +1,17 @@
+.index-list-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.list-header {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.list-content {
+  flex: 1;
+  overflow-y: auto;
+}
