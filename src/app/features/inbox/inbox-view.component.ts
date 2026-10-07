@@ -10,11 +10,27 @@ import { FilterPopoverComponent } from './components/filter-popover/filter-popov
   imports: [CommonModule, IconComponent, FilterPopoverComponent],
   template: `
     <div class="inbox-container">
-      <!-- Left List Column -->
-      <div class="inbox-list-column">
+      <!-- Left List Column (Resizable) -->
+      <div 
+        class="inbox-list-column"
+        [class.is-dragging]="isDraggingList"
+        [style.width.px]="workspaceService.inboxListWidth()"
+      >
         <!-- Inbox Column Header -->
         <div class="inbox-header">
           <div class="header-left">
+            <!-- Sidebar Expand Button (when sidebar is collapsed) -->
+            <button 
+              class="icon-btn sidebar-toggle-btn" 
+              *ngIf="workspaceService.isSidebarCollapsed()"
+              title="Expand sidebar ([)" 
+              (click)="workspaceService.toggleSidebar()"
+            >
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 3A1.5 1.5 0 0 0 0 4.5v7A1.5 1.5 0 0 0 1.5 13h13a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 14.5 3h-13zm4 1.5H1.5a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .5.5h4v-8zm1.5 8h7.5a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.5-.5H7v8z"/>
+              </svg>
+            </button>
+
             <h1 class="header-title">Inbox</h1>
             <button class="icon-btn" title="More options">
               <app-icon name="more" [size]="14"></app-icon>
@@ -79,6 +95,18 @@ import { FilterPopoverComponent } from './components/filter-popover/filter-popov
             </div>
           </ng-template>
         </div>
+
+        <!-- Resizable Splitter Gutter between List & Detail with Tapered Center Glow -->
+        <div 
+          class="resize-gutter"
+          (mousedown)="startResizeList($event)"
+          (mouseenter)="isHoveringGutter = true"
+          (mouseleave)="isHoveringGutter = false"
+        >
+          <div class="gutter-glow-line">
+            <div class="gutter-center-pip"></div>
+          </div>
+        </div>
       </div>
 
       <!-- Right Detail Pane Column -->
@@ -92,7 +120,7 @@ import { FilterPopoverComponent } from './components/filter-popover/filter-popov
                 <path 
                   d="M18 16C18 11.5817 21.5817 8 26 8H60C64.4183 8 68 11.5817 68 16V60C68 64.4183 64.4183 68 60 68H26C21.5817 68 18 64.4183 18 60V16Z" 
                   stroke="rgba(255, 255, 255, 0.2)" 
-                  stroke-width="2"
+                  stroke-width="2" 
                   stroke-linecap="round" 
                   stroke-linejoin="round"
                 />
@@ -165,13 +193,70 @@ import { FilterPopoverComponent } from './components/filter-popover/filter-popov
 
     /* Left Column */
     .inbox-list-column {
-      width: 320px;
-      min-width: 300px;
       height: 100%;
       border-right: 1px solid rgba(255, 255, 255, 0.05);
       display: flex;
       flex-direction: column;
       position: relative;
+      flex-shrink: 0;
+      transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .inbox-list-column.is-dragging {
+      transition: none !important;
+    }
+
+    /* Resize Gutter */
+    .resize-gutter {
+      position: absolute;
+      top: 0;
+      right: -3px;
+      width: 7px;
+      height: 100%;
+      cursor: col-resize;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Tapered Vertical Glow: Thin 1px, fading to edges, glowing in middle */
+    .gutter-glow-line {
+      width: 1px;
+      height: 100%;
+      background: transparent;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gutter-center-pip {
+      width: 2px;
+      height: 38px;
+      border-radius: 2px;
+      background: transparent;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .resize-gutter:hover .gutter-glow-line,
+    .inbox-list-column.is-dragging .gutter-glow-line {
+      background: linear-gradient(
+        180deg,
+        rgba(94, 106, 210, 0) 0%,
+        rgba(94, 106, 210, 0.35) 20%,
+        rgba(139, 150, 255, 0.85) 50%,
+        rgba(94, 106, 210, 0.35) 80%,
+        rgba(94, 106, 210, 0) 100%
+      );
+      box-shadow: 0 0 8px rgba(94, 106, 210, 0.3);
+    }
+
+    .resize-gutter:hover .gutter-center-pip,
+    .inbox-list-column.is-dragging .gutter-center-pip {
+      background: #7c88f7;
+      box-shadow: 0 0 6px rgba(124, 136, 247, 0.8);
     }
 
     .inbox-header {
@@ -187,6 +272,17 @@ import { FilterPopoverComponent } from './components/filter-popover/filter-popov
       display: flex;
       align-items: center;
       gap: 6px;
+    }
+
+    .sidebar-toggle-btn {
+      color: #8a8f98;
+      margin-right: 2px;
+      padding: 4px;
+    }
+
+    .sidebar-toggle-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
     }
 
     .header-title {
@@ -490,6 +586,11 @@ import { FilterPopoverComponent } from './components/filter-popover/filter-popov
   `]
 })
 export class InboxViewComponent {
+  isHoveringGutter = false;
+  isDraggingList = false;
+  startX = 0;
+  startWidth = 320;
+
   constructor(public workspaceService: WorkspaceService) {}
 
   get notifications() {
@@ -533,5 +634,27 @@ export class InboxViewComponent {
 
   openAgent(): void {
     this.workspaceService.setActiveView('Agent');
+  }
+
+  startResizeList(event: MouseEvent): void {
+    event.preventDefault();
+    this.isDraggingList = true;
+    this.startX = event.clientX;
+    this.startWidth = this.workspaceService.inboxListWidth();
+
+    const mouseMoveHandler = (e: MouseEvent) => {
+      const deltaX = e.clientX - this.startX;
+      const newWidth = this.startWidth + deltaX;
+      this.workspaceService.setInboxListWidth(newWidth);
+    };
+
+    const mouseUpHandler = () => {
+      this.isDraggingList = false;
+      document.removeEventListener('mousemove', mouseMoveHandler);
+      document.removeEventListener('mouseup', mouseUpHandler);
+    };
+
+    document.addEventListener('mousemove', mouseMoveHandler);
+    document.addEventListener('mouseup', mouseUpHandler);
   }
 }

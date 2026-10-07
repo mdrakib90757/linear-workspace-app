@@ -9,6 +9,14 @@ export class WorkspaceService {
   readonly activeView = signal<ActiveView>('Inbox');
   readonly previousView = signal<ActiveView>('Inbox');
 
+  // Sidebar Layout State (Resizable & Collapsible)
+  readonly sidebarWidth = signal<number>(240);
+  readonly isSidebarCollapsed = signal<boolean>(false);
+  readonly lastSidebarWidth = signal<number>(240);
+
+  // Inbox List Width (Resizable Split Pane)
+  readonly inboxListWidth = signal<number>(320);
+
   // Command Palette & Modals
   readonly isCommandPaletteOpen = signal<boolean>(false);
   readonly isNewIssueModalOpen = signal<boolean>(false);
@@ -102,6 +110,35 @@ export class WorkspaceService {
     this.previousView.set(this.activeView());
     this.activeView.set(view);
     this.closeAllMenus();
+  }
+
+  toggleSidebar(): void {
+    if (this.isSidebarCollapsed()) {
+      this.isSidebarCollapsed.set(false);
+      this.sidebarWidth.set(this.lastSidebarWidth() || 240);
+    } else {
+      this.lastSidebarWidth.set(this.sidebarWidth());
+      this.isSidebarCollapsed.set(true);
+      this.sidebarWidth.set(0);
+    }
+  }
+
+  setSidebarWidth(width: number): void {
+    if (width <= 140) {
+      // Snap collapse
+      this.isSidebarCollapsed.set(true);
+      this.sidebarWidth.set(0);
+    } else {
+      const clamped = Math.max(200, Math.min(width, 420));
+      this.isSidebarCollapsed.set(false);
+      this.sidebarWidth.set(clamped);
+      this.lastSidebarWidth.set(clamped);
+    }
+  }
+
+  setInboxListWidth(width: number): void {
+    const clamped = Math.max(240, Math.min(width, 600));
+    this.inboxListWidth.set(clamped);
   }
 
   selectNotification(id: string | null): void {
