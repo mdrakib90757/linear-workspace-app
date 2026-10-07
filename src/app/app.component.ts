@@ -1,51 +1,75 @@
-// import { Component } from '@angular/core';
-// import { CommonModule } from '@angular/common';
-// import { AppLayoutComponent } from './features/layout/components/app-layout/app-layout.component';
-// import { CommandPaletteComponent } from './shared/components/command-palette/command-palette.component';
-
-// @Component({
-//   selector: 'app-root',
-//   standalone: true,
-//   imports: [CommonModule, AppLayoutComponent, CommandPaletteComponent],
-//   template: `
-//     <app-layout></app-layout>
-//     <app-command-palette></app-command-palette>
-//   `
-// })
-// export class AppComponent {
-//   title = 'linear-workspace-app';
-// }
-import { Component, signal } from '@angular/core';
-import { CommonModule } from '@angular/common'; import { SidebarComponent } from './features/layout/components/sidebar/sidebar.component';
-import { IndexListComponent } from './features/workspace/components/index-list/index-list.component';
-import { DetailPanelComponent } from './features/workspace/components/detail-panel/detail-panel.component';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { WorkspaceService } from './core/services/workspace.service';
+import { SidebarComponent } from './features/layout/components/sidebar/sidebar.component';
+import { InboxViewComponent } from './features/inbox/inbox-view.component';
+import { AgentViewComponent } from './features/agent/agent-view.component';
+import { GenericViewComponent } from './features/generic-view/generic-view.component';
+import { CommandPaletteComponent } from './shared/components/command-palette/command-palette.component';
+import { NewIssueModalComponent } from './shared/components/new-issue-modal/new-issue-modal.component';
+import { ShortcutsModalComponent } from './shared/components/shortcuts-modal/shortcuts-modal.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, SidebarComponent, IndexListComponent, DetailPanelComponent],
+  imports: [
+    CommonModule,
+    SidebarComponent,
+    InboxViewComponent,
+    AgentViewComponent,
+    GenericViewComponent,
+    CommandPaletteComponent,
+    NewIssueModalComponent,
+    ShortcutsModalComponent
+  ],
   template: `
-    <div class="app-container">
-      <app-sidebar (selectSection)="activeSection.set($event)"></app-sidebar>
-      <app-index-list [title]="activeSection()"></app-index-list>
-      <app-detail-panel></app-detail-panel>
+    <div class="linear-app-layout" (click)="onLayoutClick()">
+      <!-- Sidebar Navigation -->
+      <app-sidebar></app-sidebar>
+
+      <!-- Main Dynamic Content Workspace -->
+      <main class="linear-main-content">
+        <app-inbox-view *ngIf="activeView() === 'Inbox'"></app-inbox-view>
+        <app-agent-view *ngIf="activeView() === 'Agent'"></app-agent-view>
+        <app-generic-view 
+          *ngIf="activeView() !== 'Inbox' && activeView() !== 'Agent'"
+          [activeView]="activeView()"
+        ></app-generic-view>
+      </main>
+
+      <!-- Overlays and Modals -->
+      <app-command-palette></app-command-palette>
+      <app-new-issue-modal></app-new-issue-modal>
+      <app-shortcuts-modal></app-shortcuts-modal>
     </div>
   `,
   styles: [`
-    .app-container {
+    .linear-app-layout {
       display: flex;
-      height: 100vh;
       width: 100vw;
+      height: 100vh;
       background-color: #0b0c0e;
-      color: #f7f8f8;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       overflow: hidden;
-      margin: 0;
-      box-sizing: border-box;
     }
-    * { box-sizing: border-box; }
+
+    .linear-main-content {
+      flex: 1;
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
   `]
 })
 export class AppComponent {
-  activeSection = signal('Inbox');
+  constructor(public workspaceService: WorkspaceService) {}
+
+  get activeView() {
+    return this.workspaceService.activeView;
+  }
+
+  onLayoutClick(): void {
+    // Closes popovers on ambient click
+    this.workspaceService.closeAllMenus();
+  }
 }
