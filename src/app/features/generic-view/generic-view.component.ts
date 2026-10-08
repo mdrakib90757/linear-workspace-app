@@ -13,6 +13,20 @@ import { IconComponent } from '../../shared/components/icon/icon.component';
       <!-- Header -->
       <div class="view-header">
         <div class="header-left">
+          <!-- Sidebar Expand / Peek Button (when sidebar is collapsed) -->
+          <button 
+            class="sidebar-toggle-btn" 
+            *ngIf="workspaceService.isSidebarCollapsed()"
+            title="Expand sidebar ([)" 
+            (mouseenter)="onToggleEnter()"
+            (mouseleave)="onToggleLeave()"
+            (click)="onToggleClick()"
+          >
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 3A1.5 1.5 0 0 0 0 4.5v7A1.5 1.5 0 0 0 1.5 13h13a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 14.5 3h-13zm4 1.5H1.5a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .5.5h4v-8zm1.5 8h7.5a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.5-.5H7v8z"/>
+            </svg>
+          </button>
+
           <h1 class="view-title">{{ activeView }}</h1>
           <span class="count-badge" *ngIf="issues().length > 0">{{ issues().length }}</span>
         </div>
@@ -279,15 +293,49 @@ import { IconComponent } from '../../shared/components/icon/icon.component';
       transition: background 0.15s ease;
     }
 
-    .primary-btn:hover {
-      background: #6f7cf4;
+    .sidebar-toggle-btn {
+      color: #8a8f98;
+      margin-right: 8px;
+      padding: 4px;
+      border-radius: 4px;
+      background: transparent;
+      border: none;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .sidebar-toggle-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.09);
     }
   `]
 })
 export class GenericViewComponent {
   @Input() activeView: ActiveView = 'My issues';
+  private toggleHoverTimeout: any;
 
   constructor(public workspaceService: WorkspaceService) {}
+
+  onToggleEnter(): void {
+    if (this.toggleHoverTimeout) {
+      clearTimeout(this.toggleHoverTimeout);
+    }
+    this.workspaceService.setSidebarPeeking(true);
+  }
+
+  onToggleLeave(): void {
+    this.toggleHoverTimeout = setTimeout(() => {
+      if (!this.workspaceService.isSidebarPeeking()) {
+        this.workspaceService.setSidebarPeeking(false);
+      }
+    }, 250);
+  }
+
+  onToggleClick(): void {
+    this.workspaceService.toggleSidebar();
+  }
 
   get issues() {
     return this.workspaceService.issues;

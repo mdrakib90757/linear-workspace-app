@@ -9,9 +9,10 @@ export class WorkspaceService {
   readonly activeView = signal<ActiveView>('Inbox');
   readonly previousView = signal<ActiveView>('Inbox');
 
-  // Sidebar Layout State (Resizable & Collapsible)
+  // Sidebar Layout State (Resizable, Collapsible & Hover Peek)
   readonly sidebarWidth = signal<number>(240);
   readonly isSidebarCollapsed = signal<boolean>(false);
+  readonly isSidebarPeeking = signal<boolean>(false);
   readonly lastSidebarWidth = signal<number>(240);
 
   // Inbox List Width (Resizable Split Pane)
@@ -109,16 +110,19 @@ export class WorkspaceService {
   setActiveView(view: ActiveView): void {
     this.previousView.set(this.activeView());
     this.activeView.set(view);
+    this.isSidebarPeeking.set(false);
     this.closeAllMenus();
   }
 
   toggleSidebar(): void {
     if (this.isSidebarCollapsed()) {
       this.isSidebarCollapsed.set(false);
+      this.isSidebarPeeking.set(false);
       this.sidebarWidth.set(this.lastSidebarWidth() || 240);
     } else {
       this.lastSidebarWidth.set(this.sidebarWidth());
       this.isSidebarCollapsed.set(true);
+      this.isSidebarPeeking.set(false);
       this.sidebarWidth.set(0);
     }
   }
@@ -133,6 +137,12 @@ export class WorkspaceService {
       this.isSidebarCollapsed.set(false);
       this.sidebarWidth.set(clamped);
       this.lastSidebarWidth.set(clamped);
+    }
+  }
+
+  setSidebarPeeking(peeking: boolean): void {
+    if (this.isSidebarCollapsed()) {
+      this.isSidebarPeeking.set(peeking);
     }
   }
 
