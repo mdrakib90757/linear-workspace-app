@@ -257,7 +257,7 @@ import { UserProfileMenuComponent } from '../user-profile-menu/user-profile-menu
   styles: [`
     .sidebar-peek-panel {
       position: fixed;
-      top: 8px;
+      top: 48px;
       left: 8px;
       bottom: 8px;
       width: 236px;
