@@ -11,57 +11,55 @@ import { PopoverComponent } from '../../shared/components/popover/popover.compon
   imports: [CommonModule, FormsModule, IconComponent, PopoverComponent],
   template: `
     <div class="agent-container">
-      <!-- Top Bar: New chat dropdown -->
-      <div class="agent-topbar">
-        <!-- Sidebar Expand / Peek Button (when sidebar is collapsed) -->
-        <button 
-          class="icon-btn sidebar-toggle-btn" 
-          *ngIf="workspaceService.isSidebarCollapsed()"
-          title="Expand sidebar ([)" 
-          (mouseenter)="onToggleEnter()"
-          (mouseleave)="onToggleLeave()"
-          (click)="onToggleClick()"
-        >
-          <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 3A1.5 1.5 0 0 0 0 4.5v7A1.5 1.5 0 0 0 1.5 13h13a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 14.5 3h-13zm4 1.5H1.5a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .5.5h4v-8zm1.5 8h7.5a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.5-.5H7v8z"/>
-          </svg>
-        </button>
+      <!-- Top Bar: New chat dropdown & History search (Screenshot 1) -->
+      <div class="agent-topbar-wrapper">
+        <div class="agent-topbar">
+          <button 
+            class="icon-btn sidebar-toggle-btn" 
+            *ngIf="workspaceService.isSidebarCollapsed()"
+            title="Expand sidebar ([)" 
+            (mouseenter)="onToggleEnter()"
+            (mouseleave)="onToggleLeave()"
+            (click)="onToggleClick()"
+          >
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 3A1.5 1.5 0 0 0 0 4.5v7A1.5 1.5 0 0 0 1.5 13h13a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 14.5 3h-13zm4 1.5H1.5a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .5.5h4v-8zm1.5 8h7.5a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.5-.5H7v8z"/>
+            </svg>
+          </button>
 
-        <button class="new-chat-dropdown-btn" (click)="toggleNewChatMenu($event)">
-          <span>New chat</span>
-          <app-icon name="chevron-down" [size]="11" class="chevron-icon"></app-icon>
-        </button>
+          <button class="new-chat-dropdown-btn" (click)="toggleNewChatMenu($event)">
+            <span>New chat</span>
+            <app-icon name="chevron-down" [size]="10" class="chevron-icon"></app-icon>
+          </button>
 
-        <app-popover 
-          *ngIf="workspaceService.isAgentNewChatMenuOpen()" 
-          top="42px" 
-          left="24px" 
-          width="180px"
-          (close)="workspaceService.isAgentNewChatMenuOpen.set(false)"
-        >
-          <div class="chat-menu">
+          <div class="chat-dropdown-menu" *ngIf="workspaceService.isAgentNewChatMenuOpen()">
             <button class="chat-menu-item" (click)="startNewChat()">
-              <app-icon name="plus" [size]="13"></app-icon>
+              <app-icon name="plus" [size]="12"></app-icon>
               <span>New chat</span>
             </button>
             <button class="chat-menu-item" (click)="clearChatHistory()">
-              <app-icon name="archive" [size]="13"></app-icon>
+              <app-icon name="archive" [size]="12"></app-icon>
               <span>Clear history</span>
             </button>
           </div>
-        </app-popover>
+        </div>
+
+        <!-- No history Pill Box below New Chat (Screenshot 1) -->
+        <div class="history-pill-box">
+          <input type="text" class="history-pill-input" placeholder="No history" readonly />
+        </div>
       </div>
 
       <!-- Main Agent Area with Linear Watermark Logo -->
       <div class="agent-main-scroll">
-        <!-- Background Linear Watermark Graphic -->
+        <!-- Background Linear Signature Logo Watermark (Screenshot 1, 2) -->
         <div class="watermark-container">
-          <svg class="linear-watermark-svg" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="200" cy="200" r="180" stroke="rgba(255, 255, 255, 0.03)" stroke-width="1.5" />
-            <path d="M70 200C70 128.203 128.203 70 200 70" stroke="rgba(255, 255, 255, 0.04)" stroke-width="2" />
-            <path d="M100 240L300 160" stroke="rgba(255, 255, 255, 0.03)" stroke-width="2.5" />
-            <path d="M120 280L320 200" stroke="rgba(255, 255, 255, 0.025)" stroke-width="2.5" />
-            <path d="M150 320L340 240" stroke="rgba(255, 255, 255, 0.02)" stroke-width="2.5" />
+          <svg class="linear-watermark-svg" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="160" cy="160" r="135" stroke="rgba(255, 255, 255, 0.02)" stroke-width="2" />
+            <path d="M75 75L245 245" stroke="rgba(255, 255, 255, 0.025)" stroke-width="3" stroke-linecap="round"/>
+            <path d="M100 50L270 220" stroke="rgba(255, 255, 255, 0.025)" stroke-width="3" stroke-linecap="round"/>
+            <path d="M50 100L220 270" stroke="rgba(255, 255, 255, 0.025)" stroke-width="3" stroke-linecap="round"/>
+            <path d="M30 130L190 290" stroke="rgba(255, 255, 255, 0.025)" stroke-width="3" stroke-linecap="round"/>
           </svg>
         </div>
 
@@ -123,34 +121,13 @@ import { PopoverComponent } from '../../shared/components/popover/popover.compon
                   <app-icon name="chevron-down" [size]="10"></app-icon>
                 </button>
 
-                <!-- Skills Popover -->
-                <app-popover 
-                  *ngIf="workspaceService.isSkillsMenuOpen()" 
-                  bottom="36px" 
-                  left="0px" 
-                  width="200px"
-                  (close)="workspaceService.isSkillsMenuOpen.set(false)"
-                >
-                  <div class="skills-menu-list">
-                    <div class="skills-title">Active Capabilities</div>
-                    <button class="skill-item" (click)="selectSkill('Project Scoping')">
-                      <app-icon name="project" [size]="13"></app-icon>
-                      <span>Project Scoping</span>
-                    </button>
-                    <button class="skill-item" (click)="selectSkill('Issue Triage')">
-                      <app-icon name="issues" [size]="13"></app-icon>
-                      <span>Issue Triage</span>
-                    </button>
-                    <button class="skill-item" (click)="selectSkill('GitHub Code Search')">
-                      <app-icon name="github" [size]="13"></app-icon>
-                      <span>GitHub Search</span>
-                    </button>
-                    <button class="skill-item" (click)="selectSkill('Backlog Analysis')">
-                      <app-icon name="search" [size]="13"></app-icon>
-                      <span>Backlog Analysis</span>
-                    </button>
-                  </div>
-                </app-popover>
+                <!-- Skills Popover with "+ Create skill" (Screenshot 2) -->
+                <div class="skills-dropdown-menu" *ngIf="workspaceService.isSkillsMenuOpen()">
+                  <button type="button" class="create-skill-btn" (click)="createSkill()">
+                    <app-icon name="plus" [size]="12"></app-icon>
+                    <span>Create skill</span>
+                  </button>
+                </div>
               </div>
 
               <!-- Right Actions: Paperclip + Purple Send Button -->
@@ -217,15 +194,15 @@ import { PopoverComponent } from '../../shared/components/popover/popover.compon
         </div>
       </div>
 
-      <!-- Bottom Agent Status Bar -->
+      <!-- Bottom Agent Status Bar (Screenshots 1-5) -->
       <div class="agent-bottom-bar">
         <div class="status-left"></div>
         <div class="status-right">
-          <button class="agent-pill-btn active">
+          <button class="agent-pill-btn active" (click)="workspaceService.toggleFloatingAgentChat()">
             <app-icon name="agent" [size]="13"></app-icon>
             <span>Agent</span>
           </button>
-          <button class="history-btn" title="Chat history">
+          <button class="history-btn" title="Chat history" (click)="workspaceService.toggleFloatingAgentChat()">
             <app-icon name="history" [size]="14"></app-icon>
           </button>
         </div>
@@ -237,19 +214,98 @@ import { PopoverComponent } from '../../shared/components/popover/popover.compon
       display: flex;
       flex-direction: column;
       width: 100%;
-      height: 100vh;
-      background-color: #0b0c0e;
+      height: 100%;
+      background-color: #101114;
       position: relative;
       overflow: hidden;
     }
 
+    .agent-topbar-wrapper {
+      padding: 12px 20px 4px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
     .agent-topbar {
-      height: 48px;
-      padding: 0 24px;
+      height: 32px;
       display: flex;
       align-items: center;
+      gap: 6px;
       position: relative;
-      z-index: 10;
+    }
+
+    .chat-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 2px);
+      left: 0;
+      z-index: 50;
+      width: 150px;
+      background: #18191d;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+      padding: 3px;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .history-pill-box {
+      width: 220px;
+    }
+
+    .history-pill-input {
+      width: 100%;
+      height: 28px;
+      background: rgba(255, 255, 255, 0.035);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      padding: 0 10px;
+      color: #6b7280;
+      font-size: 12px;
+      font-family: inherit;
+      outline: none;
+      cursor: default;
+    }
+
+    .history-pill-input::placeholder {
+      color: #6b7280;
+    }
+
+    .skills-dropdown-menu {
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 0;
+      z-index: 50;
+      width: 125px;
+      background: #1d1e23;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+      padding: 3px;
+    }
+
+    .create-skill-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+      padding: 5px 8px;
+      background: transparent;
+      border: none;
+      border-radius: 4px;
+      color: #f7f8f8;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.1s ease;
+      font-family: inherit;
+    }
+
+    .create-skill-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
     }
 
     .new-chat-dropdown-btn {
@@ -832,6 +888,11 @@ export class AgentViewComponent {
   useExample(examplePrompt: string): void {
     this.promptText = examplePrompt;
     this.sendPrompt();
+  }
+
+  createSkill(): void {
+    this.promptText = 'Create custom AI skill: ';
+    this.workspaceService.isSkillsMenuOpen.set(false);
   }
 
   dismissExamples(): void {

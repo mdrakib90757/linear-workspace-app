@@ -27,11 +27,28 @@ export class WorkspaceService {
   readonly activeTeam = signal<string>('Md Rakib Sordar');
   readonly currentTeamActionMenu = signal<boolean>(false);
   readonly isInboxFilterOpen = signal<boolean>(false);
+  readonly isInboxDisplayOptionsOpen = signal<boolean>(false);
+  readonly isIssuesFilterOpen = signal<boolean>(false);
+  readonly isIssuesDisplayOptionsOpen = signal<boolean>(false);
   readonly isUserProfileMenuOpen = signal<boolean>(false);
   readonly isSkillsMenuOpen = signal<boolean>(false);
   readonly isAgentNewChatMenuOpen = signal<boolean>(false);
 
+  // Issues View & Options State (Screenshots 1-5)
+  readonly activeMyIssuesTab = signal<'Assigned' | 'Created' | 'Subscribed' | 'Activity'>('Assigned');
+  readonly issuesViewMode = signal<'List' | 'Board'>('List');
+  readonly issuesGrouping = signal<string>('Focus');
+  readonly issuesSubGrouping = signal<string>('No grouping');
+  readonly issuesOrdering = signal<string>('Importance');
+  readonly issuesOrderRecency = signal<boolean>(false);
+  readonly issuesCompletedTime = signal<string>('Past day');
+  readonly issuesShowSubIssues = signal<boolean>(true);
+  readonly issuesNestedSubIssues = signal<string>('Show matching');
+  readonly issuesDisplayProperties = signal<Set<string>>(new Set(['ID', 'Status', 'Assignee', 'Priority', 'Project', 'Labels', 'Created']));
+
   // Inbox & Issues State
+  readonly isPriorityInboxEnabled = signal<boolean>(false);
+  readonly activePriorityTab = signal<'Priority' | 'Other'>('Priority');
   readonly notifications = signal<NotificationItem[]>([]);
   readonly selectedNotificationId = signal<string | null>(null);
   readonly filterQuery = signal<string>('');
@@ -42,6 +59,7 @@ export class WorkspaceService {
   readonly chatMessages = signal<AgentChatMessage[]>([]);
   readonly isAgentThinking = signal<boolean>(false);
   readonly showAgentExamples = signal<boolean>(true);
+  readonly isFloatingAgentChatOpen = signal<boolean>(false);
 
   // Computed state
   readonly selectedNotification = computed(() => {
@@ -168,6 +186,10 @@ export class WorkspaceService {
     this.showAllNotifications.update(val => !val);
   }
 
+  toggleFloatingAgentChat(): void {
+    this.isFloatingAgentChatOpen.update(v => !v);
+  }
+
   sendAgentMessage(text: string): void {
     if (!text.trim()) return;
 
@@ -212,6 +234,9 @@ export class WorkspaceService {
   closeAllMenus(): void {
     this.currentTeamActionMenu.set(false);
     this.isInboxFilterOpen.set(false);
+    this.isInboxDisplayOptionsOpen.set(false);
+    this.isIssuesFilterOpen.set(false);
+    this.isIssuesDisplayOptionsOpen.set(false);
     this.isUserProfileMenuOpen.set(false);
     this.isSkillsMenuOpen.set(false);
     this.isAgentNewChatMenuOpen.set(false);

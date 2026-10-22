@@ -172,6 +172,86 @@ import { CommonModule } from '@angular/common';
       <svg *ngIf="name === 'close'" [attr.width]="size" [attr.height]="size" viewBox="0 0 16 16" fill="currentColor">
         <path fill-rule="evenodd" clip-rule="evenodd" d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.75.75 0 1 1 1.06 1.06L9.06 8l3.22 3.22a.75.75 0 1 1-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 0 1-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06z"/>
       </svg>
+
+      <!-- Notification Type Loop -->
+      <svg *ngIf="name === 'notification-type'" [attr.width]="size" [attr.height]="size" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3">
+        <rect x="2" y="3" width="12" height="10" rx="2" />
+        <path d="M2 6h3.5a1.5 1.5 0 0 1 1.5 1.5v0a1.5 1.5 0 0 0 1.5 1.5h0a1.5 1.5 0 0 0 1.5-1.5v0A1.5 1.5 0 0 1 11 6h3" />
+      </svg>
+
+      <!-- Priority Urgent (Red Exclamation) -->
+      <svg *ngIf="name === 'priority-urgent'" [attr.width]="size" [attr.height]="size" viewBox="0 0 16 16" fill="none">
+        <rect width="16" height="16" rx="3.5" fill="#e11d48"/>
+        <path d="M8 4.2v4.8M8 11.5v.5" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+
+      <!-- Priority High (3 bars) -->
+      <svg *ngIf="name === 'priority-high'" [attr.width]="size" [attr.height]="size" viewBox="0 0 16 16" fill="#f59e0b">
+        <rect x="2" y="9" width="3" height="5" rx="1"/>
+        <rect x="6.5" y="6" width="3" height="8" rx="1"/>
+        <rect x="11" y="3" width="3" height="11" rx="1"/>
+      </svg>
+
+      <!-- Priority Medium (2 bars) -->
+      <svg *ngIf="name === 'priority-medium'" [attr.width]="size" [attr.height]="size" viewBox="0 0 16 16" fill="#f59e0b">
+        <rect x="2" y="9" width="3" height="5" rx="1"/>
+        <rect x="6.5" y="6" width="3" height="8" rx="1"/>
+        <rect x="11" y="3" width="3" height="11" rx="1" fill="rgba(255,255,255,0.2)"/>
+      </svg>
+
+      <!-- Priority Low (1 bar) -->
+      <svg *ngIf="name === 'priority-low'" [attr.width]="size" [attr.height]="size" viewBox="0 0 16 16" fill="#0284c7">
+        <rect x="2" y="9" width="3" height="5" rx="1"/>
+        <rect x="6.5" y="6" width="3" height="8" rx="1" fill="rgba(255,255,255,0.2)"/>
+        <rect x="11" y="3" width="3" height="11" rx="1" fill="rgba(255,255,255,0.2)"/>
+      </svg>
+
+      <!-- Priority None (3 dots) -->
+      <svg *ngIf="name === 'priority-none'" [attr.width]="size" [attr.height]="size" viewBox="0 0 16 16" fill="#6b7280">
+        <circle cx="3" cy="8" r="1.5"/>
+        <circle cx="8" cy="8" r="1.5"/>
+        <circle cx="13" cy="8" r="1.5"/>
+      </svg>
+
+      <!-- Status Triage -->
+      <svg *ngIf="name === 'status-triage'" [attr.width]="size" [attr.height]="size" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="6" stroke="#ea580c" stroke-width="1.8"/>
+        <circle cx="8" cy="8" r="2.2" fill="#ea580c"/>
+      </svg>
+
+      <!-- Status Backlog -->
+      <svg *ngIf="name === 'status-backlog'" [attr.width]="size" [attr.height]="size" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="6" stroke="#9ca3af" stroke-width="1.8" stroke-dasharray="2.5 3"/>
+      </svg>
+
+      <!-- Status Unstarted -->
+      <svg *ngIf="name === 'status-unstarted'" [attr.width]="size" [attr.height]="size" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="6" stroke="#9ca3af" stroke-width="1.8"/>
+      </svg>
+
+      <!-- Status Started -->
+      <svg *ngIf="name === 'status-started'" [attr.width]="size" [attr.height]="size" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="6" stroke="#f59e0b" stroke-width="1.8"/>
+        <path d="M8 2 A6 6 0 0 1 8 14 Z" fill="#f59e0b"/>
+      </svg>
+
+      <!-- Status Completed -->
+      <svg *ngIf="name === 'status-completed'" [attr.width]="size" [attr.height]="size" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="7" fill="#5e6ad2"/>
+        <path d="M5 8l2.2 2.2 4-4.2" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+
+      <!-- Status Canceled -->
+      <svg *ngIf="name === 'status-canceled'" [attr.width]="size" [attr.height]="size" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="6.5" stroke="#6b7280" stroke-width="1.5"/>
+        <path d="M5.5 5.5l5 5M10.5 5.5l-5 5" stroke="#6b7280" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+
+      <!-- Status Duplicate -->
+      <svg *ngIf="name === 'status-duplicate'" [attr.width]="size" [attr.height]="size" viewBox="0 0 16 16" fill="none">
+        <circle cx="6" cy="8" r="4.5" stroke="#6b7280" stroke-width="1.5"/>
+        <circle cx="10" cy="8" r="4.5" stroke="#6b7280" stroke-width="1.5"/>
+      </svg>
     </span>
   `,
   styles: [`

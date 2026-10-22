@@ -42,7 +42,7 @@ import { IconComponent } from '../../shared/components/icon/icon.component';
       <!-- Content -->
       <div class="view-content">
         <!-- If Issues list -->
-        <div class="issues-table" *ngIf="activeView === 'My issues' || activeView === 'Issues' || activeView === 'Home' || activeView === 'Projects' || activeView === 'Views'">
+        <div class="issues-table" *ngIf="activeView === 'My issues' || activeView === 'Issues' || activeView === 'Home' || activeView === 'Projects'">
           <div class="table-header">
             <div class="col col-id">Identifier</div>
             <div class="col col-title">Title</div>
@@ -76,6 +76,39 @@ import { IconComponent } from '../../shared/components/icon/icon.component';
           </div>
         </div>
 
+        
+        <!-- Views Custom Empty State matching Screenshot 1 -->
+        <div class="views-empty-view" *ngIf="activeView === 'Views'">
+          <div class="views-chips-bar">
+            <button class="views-chip active">Issues</button>
+            <button class="views-chip">Projects</button>
+          </div>
+
+          <div class="views-center-card">
+            <div class="views-isometric-icon">
+              <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Isometric stacked papers/view layers matching Screenshot 1 -->
+                <path d="M30 10L48 20L30 30L12 20L30 10Z" stroke="rgba(255, 255, 255, 0.45)" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M14 26L30 35L46 26" stroke="rgba(255, 255, 255, 0.28)" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M14 32L30 41L46 32" stroke="rgba(255, 255, 255, 0.16)" stroke-width="2" stroke-linejoin="round"/>
+              </svg>
+            </div>
+
+            <h2 class="views-title">Views</h2>
+            <p class="views-description">
+              Create custom views using filters to show only the issues you want to see. You can save, share, and favorite these views for easy access and faster team collaboration.
+            </p>
+            <p class="views-tip">
+              You can also save any existing view by clicking the <span class="tip-icon">⬡</span> icon or by pressing <kbd>Alt</kbd> <kbd>V</kbd>.
+            </p>
+
+            <div class="views-action-row">
+              <button class="create-view-btn" (click)="createNewIssue()">Create new view</button>
+              <button class="doc-btn">Documentation</button>
+            </div>
+          </div>
+        </div>
+
         <!-- If Import / Invite / GitHub integrations -->
         <div class="integration-placeholder" *ngIf="activeView === 'Import issues' || activeView === 'Invite people' || activeView === 'Connect GitHub'">
           <div class="integration-card">
@@ -93,8 +126,8 @@ import { IconComponent } from '../../shared/components/icon/icon.component';
       display: flex;
       flex-direction: column;
       width: 100%;
-      height: 100vh;
-      background-color: #0b0c0e;
+      height: 100%;
+      background-color: #101114;
       overflow: hidden;
     }
 
@@ -309,6 +342,126 @@ import { IconComponent } from '../../shared/components/icon/icon.component';
     .sidebar-toggle-btn:hover {
       color: #ffffff;
       background: rgba(255, 255, 255, 0.09);
+    }
+
+    /* Views Page Custom Styling */
+    .views-empty-view {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      width: 100%;
+    }
+
+    .views-chips-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .views-chip {
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #8a8f98;
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .views-chip.active {
+      color: #f7f8f8;
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .views-center-card {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 0 20px 60px 20px;
+    }
+
+    .views-isometric-icon {
+      margin-bottom: 16px;
+    }
+
+    .views-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #f7f8f8;
+      margin-bottom: 8px;
+    }
+
+    .views-description {
+      font-size: 13px;
+      color: #8a8f98;
+      line-height: 1.55;
+      margin-bottom: 12px;
+    }
+
+    .views-tip {
+      font-size: 12px;
+      color: #62666d;
+      margin-bottom: 20px;
+    }
+
+    .views-tip kbd {
+      background: rgba(255, 255, 255, 0.08);
+      color: #9ca3af;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-family: inherit;
+      font-size: 11px;
+    }
+
+    .views-action-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .create-view-btn {
+      background: #5e6ad2;
+      color: #ffffff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.12s ease;
+      font-family: inherit;
+    }
+
+    .create-view-btn:hover {
+      background: #6f7cf4;
+    }
+
+    .doc-btn {
+      background: rgba(255, 255, 255, 0.06);
+      color: #e5e7eb;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.12s ease;
+      font-family: inherit;
+    }
+
+    .doc-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
     }
   `]
 })

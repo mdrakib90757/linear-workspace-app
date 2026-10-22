@@ -1,13 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WorkspaceService } from '../../core/services/workspace.service';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { FilterPopoverComponent } from './components/filter-popover/filter-popover.component';
+import { DisplayOptionsPopoverComponent } from './components/display-options-popover/display-options-popover.component';
 
 @Component({
   selector: 'app-inbox-view',
   standalone: true,
-  imports: [CommonModule, IconComponent, FilterPopoverComponent],
+  imports: [CommonModule, IconComponent, FilterPopoverComponent, DisplayOptionsPopoverComponent],
   template: `
     <div class="inbox-container">
       <!-- Left List Column (Resizable) -->
@@ -43,36 +44,73 @@ import { FilterPopoverComponent } from './components/filter-popover/filter-popov
             <button class="icon-btn" title="Mark all as read" (click)="markAllAsRead()">
               <app-icon name="check-all" [size]="14"></app-icon>
             </button>
-            <button 
-              class="icon-btn filter-btn" 
-              [class.active]="workspaceService.isInboxFilterOpen()"
-              title="Filter notifications (F)" 
-              (click)="toggleFilter($event)"
-            >
-              <app-icon name="filter" [size]="14"></app-icon>
-            </button>
-            <button class="icon-btn" title="Display options">
-              <app-icon name="sliders" [size]="14"></app-icon>
-            </button>
+
+            <!-- Filter Anchor & Popover (Directly underneath the Filter button) -->
+            <div class="popover-anchor">
+              <button 
+                class="icon-btn filter-btn" 
+                [class.active]="workspaceService.isInboxFilterOpen()"
+                title="Filter notifications (F)" 
+                (click)="toggleFilter($event)"
+              >
+                <app-icon name="filter" [size]="14"></app-icon>
+              </button>
+
+              <!-- Filter Popover Popup (Screenshots 1, 3, 4, 5) -->
+              <app-filter-popover
+                *ngIf="workspaceService.isInboxFilterOpen()"
+                (closed)="workspaceService.isInboxFilterOpen.set(false)"
+                (filterSelected)="onFilterSelected($event)"
+              ></app-filter-popover>
+            </div>
+
+            <!-- Display Options Anchor & Popover (Directly underneath the Sliders button) -->
+            <div class="popover-anchor">
+              <button 
+                class="icon-btn display-btn" 
+                [class.active]="workspaceService.isInboxDisplayOptionsOpen()"
+                title="Display options"
+                (click)="toggleDisplayOptions($event)"
+              >
+                <app-icon name="sliders" [size]="14"></app-icon>
+              </button>
+
+              <!-- Display Options Popover Popup (Screenshot 2) -->
+              <app-display-options-popover
+                *ngIf="workspaceService.isInboxDisplayOptionsOpen()"
+                (closed)="workspaceService.isInboxDisplayOptionsOpen.set(false)"
+              ></app-display-options-popover>
+            </div>
           </div>
         </div>
 
-        <!-- Filter Popover Popup (Screenshot 4) -->
-        <app-filter-popover
-          *ngIf="workspaceService.isInboxFilterOpen()"
-          top="42px"
-          right="40px"
-          (closed)="workspaceService.isInboxFilterOpen.set(false)"
-          (filterSelected)="onFilterSelected($event)"
-        ></app-filter-popover>
+        <!-- Priority / Other Chips Bar (Screenshot 2) -->
+        <div class="inbox-chips-bar" *ngIf="workspaceService.isPriorityInboxEnabled()">
+          <button 
+            type="button"
+            class="inbox-chip-btn" 
+            [class.active]="workspaceService.activePriorityTab() === 'Priority'"
+            (click)="workspaceService.activePriorityTab.set('Priority')"
+          >
+            Priority
+          </button>
+          <button 
+            type="button"
+            class="inbox-chip-btn" 
+            [class.active]="workspaceService.activePriorityTab() === 'Other'"
+            (click)="workspaceService.activePriorityTab.set('Other')"
+          >
+            Other
+          </button>
+        </div>
 
         <!-- Column Content / Notifications List or Empty State -->
         <div class="inbox-body">
-          <ng-container *ngIf="notifications().length === 0; else notificationsList">
-            <!-- Empty State matching Screenshots 2 & 4 -->
+          <ng-container *ngIf="filteredNotifications().length === 0; else notificationsList">
+            <!-- Empty State matching Screenshots 1 & 2 -->
             <div class="empty-state">
               <span class="empty-title">No unreads</span>
-              <button class="show-all-btn" (click)="toggleShowAll()">Show all notifications</button>
+              <button type="button" class="show-all-btn" (click)="toggleShowAll()">Show all notifications</button>
             </div>
           </ng-container>
 
@@ -117,30 +155,9 @@ import { FilterPopoverComponent } from './components/filter-popover/filter-popov
           <!-- Exact Linear Tray Illustration matching Screenshots 2, 3, 4 -->
           <div class="detail-empty-state">
             <div class="inbox-tray-illustration">
-              <svg width="86" height="86" viewBox="0 0 86 86" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- Outer subtle rounded frame -->
-                <path 
-                  d="M18 16C18 11.5817 21.5817 8 26 8H60C64.4183 8 68 11.5817 68 16V60C68 64.4183 64.4183 68 60 68H26C21.5817 68 18 64.4183 18 60V16Z" 
-                  stroke="rgba(255, 255, 255, 0.2)" 
-                  stroke-width="2" 
-                  stroke-linecap="round" 
-                  stroke-linejoin="round"
-                />
-                <!-- Inner Tray cutout curve -->
-                <path 
-                  d="M18 50H28C30.2091 50 32 51.7909 32 54V55C32 58.3137 34.6863 61 38 61H48C51.3137 61 54 58.3137 54 55V54C54 51.7909 55.7909 50 58 50H68" 
-                  stroke="rgba(255, 255, 255, 0.45)" 
-                  stroke-width="2" 
-                  stroke-linecap="round" 
-                  stroke-linejoin="round"
-                />
-                <!-- Glowing accent line inside tray -->
-                <path 
-                  d="M36 57H50" 
-                  stroke="rgba(255, 255, 255, 0.25)" 
-                  stroke-width="2" 
-                  stroke-linecap="round"
-                />
+              <svg width="68" height="68" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 22C20 20.8954 20.8954 20 22 20H46C47.1046 20 48 20.8954 48 22V42C48 43.1046 47.1046 44 46 44H41C40.4477 44 40 44.4477 40 45C40 46.6569 38.6569 48 37 48H31C29.3431 48 28 46.6569 28 45C28 44.4477 27.5523 44 27 44H22C20.8954 44 20 43.1046 20 42V22Z" stroke="rgba(255, 255, 255, 0.22)" stroke-width="1.6" stroke-linejoin="round"/>
+                <path d="M20 34H28C28.5523 34 29 34.4477 29 35C29 36.6569 30.3431 38 32 38H36C37.6569 38 39 36.6569 39 35C39 34.4477 39.4477 34 40 34H48" stroke="rgba(255, 255, 255, 0.22)" stroke-width="1.6" stroke-linecap="round"/>
               </svg>
             </div>
             <p class="no-selection-text">No notification selected</p>
@@ -177,7 +194,7 @@ import { FilterPopoverComponent } from './components/filter-popover/filter-popov
             <app-icon name="agent" [size]="13"></app-icon>
             <span>Agent</span>
           </button>
-          <button class="history-btn" title="Chat history">
+          <button class="history-btn" title="Chat history" (click)="openAgent()">
             <app-icon name="history" [size]="14"></app-icon>
           </button>
         </div>
@@ -185,11 +202,23 @@ import { FilterPopoverComponent } from './components/filter-popover/filter-popov
     </div>
   `,
   styles: [`
+    :host {
+      display: flex;
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      min-width: 0;
+      overflow: hidden;
+    }
+
     .inbox-container {
+      min-height: 100%;
+      position: relative;
       display: flex;
       width: 100%;
-      height: 100vh;
-      background-color: #0b0c0e;
+      height: 100%;
+      background-color: #101114;
       overflow: hidden;
     }
 
@@ -320,6 +349,59 @@ import { FilterPopoverComponent } from './components/filter-popover/filter-popov
       color: #ffffff;
     }
 
+    .popover-anchor {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    /* Priority / Other Chips Bar matching Screenshot 2 */
+    .inbox-chips-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      background: transparent;
+      animation: fadeInChips 0.15s ease forwards;
+    }
+
+    @keyframes fadeInChips {
+      from {
+        opacity: 0;
+        transform: translateY(-3px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .inbox-chip-btn {
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #8a8f98;
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.12s ease;
+      font-family: inherit;
+    }
+
+    .inbox-chip-btn:hover {
+      color: #c9cdd4;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .inbox-chip-btn.active {
+      color: #f7f8f8;
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .display-btn.active,
     .filter-btn.active {
       background: rgba(255, 255, 255, 0.12);
       color: #ffffff;
@@ -440,15 +522,21 @@ import { FilterPopoverComponent } from './components/filter-popover/filter-popov
       display: flex;
       flex-direction: column;
       position: relative;
+      overflow: hidden;
     }
 
     .detail-empty-state {
-      flex: 1;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 16px;
+      pointer-events: none;
     }
 
     .inbox-tray-illustration {
@@ -541,13 +629,13 @@ import { FilterPopoverComponent } from './components/filter-popover/filter-popov
 
     /* Bottom status bar */
     .bottom-status-bar {
-      margin-top: auto;
-      height: 40px;
+      position: absolute;
+      bottom: 12px;
+      right: 16px;
+      z-index: 10;
       display: flex;
       align-items: center;
-      justify-content: flex-end;
       gap: 6px;
-      padding: 0 16px;
     }
 
     .agent-pill-btn {
@@ -646,6 +734,24 @@ export class InboxViewComponent {
     this.workspaceService.isInboxFilterOpen.set(!current);
   }
 
+  toggleDisplayOptions(event: MouseEvent): void {
+    event.stopPropagation();
+    const current = this.workspaceService.isInboxDisplayOptionsOpen();
+    this.workspaceService.closeAllMenus();
+    this.workspaceService.isInboxDisplayOptionsOpen.set(!current);
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onGlobalKeyDown(e: KeyboardEvent): void {
+    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+    if (e.key === 'f' || e.key === 'F') {
+      e.preventDefault();
+      const current = this.workspaceService.isInboxFilterOpen();
+      this.workspaceService.closeAllMenus();
+      this.workspaceService.isInboxFilterOpen.set(!current);
+    }
+  }
+
   onFilterSelected(filterId: string): void {
     this.workspaceService.activeFilterCategory.set(filterId);
   }
@@ -659,7 +765,7 @@ export class InboxViewComponent {
   }
 
   openAgent(): void {
-    this.workspaceService.setActiveView('Agent');
+    this.workspaceService.toggleFloatingAgentChat();
   }
 
   startResizeList(event: MouseEvent): void {

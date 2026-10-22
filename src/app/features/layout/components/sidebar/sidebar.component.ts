@@ -243,7 +243,7 @@ import { UserProfileMenuComponent } from '../user-profile-menu/user-profile-menu
         </div>
       </div>
 
-      <!-- Resizable Splitter Gutter (Right edge) with Tapered Center Glow -->
+      <!-- Resizable Splitter Gutter (Right edge) -->
       <div 
         class="resize-gutter"
         (mousedown)="startResize($event)"
@@ -251,11 +251,6 @@ import { UserProfileMenuComponent } from '../user-profile-menu/user-profile-menu
         (mouseleave)="isHoveringGutter = false"
         (dblclick)="toggleCollapse()"
       >
-        <!-- Tapered vertical gradient glow line -->
-        <div class="gutter-glow-line">
-          <div class="gutter-center-pip"></div>
-        </div>
-
         <!-- Linear Gutter Tooltip (Screenshot 2) -->
         <div class="gutter-tooltip" *ngIf="isHoveringGutter && !isDragging && !workspaceService.isSidebarCollapsed()">
           <div class="tooltip-line">Drag to resize</div>
@@ -284,11 +279,16 @@ import { UserProfileMenuComponent } from '../user-profile-menu/user-profile-menu
     </aside>
   `,
   styles: [`
+    :host {
+      display: block;
+      height: 100%;
+      flex-shrink: 0;
+    }
     .linear-sidebar {
       position: relative;
       height: 100vh;
-      background-color: #0b0c0e;
-      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      background-color: #08090a;
+      border-right: none;
       display: flex;
       flex-direction: column;
       user-select: none;
@@ -327,58 +327,15 @@ import { UserProfileMenuComponent } from '../user-profile-menu/user-profile-menu
       opacity: 0;
     }
 
-    /* Resize Gutter / Splitter Handle */
     .resize-gutter {
       position: absolute;
       top: 0;
       right: -3px;
-      width: 7px;
+      width: 6px;
       height: 100%;
       cursor: col-resize;
       z-index: 50;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Tapered Vertical Glow: Thin, soft top/bottom fading, centered smooth accent glow */
-    .gutter-glow-line {
-      width: 1px;
-      height: 100%;
       background: transparent;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Center Pip / Sleek subtle handle that gently appears in the middle */
-    .gutter-center-pip {
-      width: 2px;
-      height: 38px;
-      border-radius: 2px;
-      background: transparent;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .resize-gutter:hover .gutter-glow-line,
-    .linear-sidebar.is-dragging .gutter-glow-line {
-      background: linear-gradient(
-        180deg,
-        rgba(94, 106, 210, 0) 0%,
-        rgba(94, 106, 210, 0.35) 20%,
-        rgba(139, 150, 255, 0.85) 50%,
-        rgba(94, 106, 210, 0.35) 80%,
-        rgba(94, 106, 210, 0) 100%
-      );
-      box-shadow: 0 0 8px rgba(94, 106, 210, 0.3);
-    }
-
-    .resize-gutter:hover .gutter-center-pip,
-    .linear-sidebar.is-dragging .gutter-center-pip {
-      background: #7c88f7;
-      box-shadow: 0 0 6px rgba(124, 136, 247, 0.8);
     }
 
     /* Gutter Tooltip matching Screenshot 2 */
@@ -517,12 +474,14 @@ import { UserProfileMenuComponent } from '../user-profile-menu/user-profile-menu
       padding-top: 4px;
     }
 
-    .sidebar-content::-webkit-scrollbar {
-      width: 4px;
+    .sidebar-content {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
     }
-    .sidebar-content::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 4px;
+    .sidebar-content::-webkit-scrollbar {
+      display: none;
+      width: 0;
+      height: 0;
     }
 
     .nav-group {

@@ -1,9 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg-app: #0b0c0e;
-  --bg-sidebar: #0b0c0e;
-  --bg-panel: #111215;
+  --bg-app: #08090b;
+  --bg-sidebar: #08090b;
+  --bg-canvas: #101114;
+  --bg-panel: #101114;
   --bg-card: #121316;
   --bg-card-hover: #16171c;
   --bg-popover: #18191d;
@@ -47,6 +48,26 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
   user-select: none;
+}
+
+app-root {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+app-inbox-view,
+app-agent-view,
+app-my-issues-view,
+app-generic-view {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
 }
 
 button {
